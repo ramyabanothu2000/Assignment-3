@@ -1,0 +1,42 @@
+<?php
+class SimCardUtils {
+	public static function isValidLuhn( $number ){
+		// validate luhn checksum
+		settype($number, 'string');
+		$sumTable = array(
+			array(0,1,2,3,4,5,6,7,8,9),
+			array(0,2,4,6,8,1,3,5,7,9)
+		);
+		$sum = 0;
+		$flip = 0;
+		for ($i = strlen($number) - 1; $i >= 0; $i--) {
+			$sum += $sumTable[$flip++ & 0x1][$number[$i]];
+		}
+		return $sum % 10 === 0;
+	}
+
+	public static function isValidSim( $sim_id ){
+		// 89       = telecom
+		// 1        = united states
+		// [480-489] = verizon
+		// {13}     = sim account
+		// {1}      = luhn check digit
+		$pattern = "/^(89)(1)(48[0-9])(\d{13})(\d)$/";
+
+		// check to see if the pattern is valid followed by the Luhn checksum
+		return ( false !== preg_match($pattern, $sim_id) && self::isValidLuhn( $sim_id ) );
+	}
+}
+?>
+<?php
+$iccids = array(
+	'89148000000745809013', // valid
+	'89148000000745809014', // invalid, wrong check digit
+	'010512314161',  // invalid, wrong length
+);
+
+foreach ( $iccids as $iccid ){
+	echo $iccid . " is " . ( SimCardUtils::isValidSim( $iccid )? "valid" : "invalid" ) . ".\n";
+echo "<br>";
+}
+?>
