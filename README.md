@@ -1,4 +1,5 @@
 # Assignment-3
 
-second question-SIMCard
-screenshot for simcard question output screen
+->Document file is for 1st and 3rd question with output.
+->second question-SIMCard
+->screenshot is output screen for simcard
